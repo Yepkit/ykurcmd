@@ -122,7 +122,7 @@ Note that on Windows the commands are executed using `ykurcmd.exe` instead of th
 Linux version.
 
 
-For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/products/4/ykur).
+For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/product/4/YKUR).
 
 
 
