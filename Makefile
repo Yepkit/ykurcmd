@@ -1,7 +1,7 @@
 CUR_PATH = $(shell echo $(PWD))
 OBJS = $(addprefix ykurcmd/objs/,ykurcmd.o commandParser.o usbcom.o)
-LIBS = -lhidapi-libusb -lusb-1.0 -ludev
-LOADPATHS = -L$(CUR_PATH)/../inc
+LIBS = -lhidapi-hidraw -ludev
+LOADPATHS = -L$(CUR_PATH)/ykurcmd/inc
 PREPROCESSOR_DEFS = -DLINUX
 CPP = g++
 
