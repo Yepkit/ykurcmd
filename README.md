@@ -57,7 +57,7 @@ Linux
 Copy to `ykur/ykucmd/inc/` the *libhidapi-hidraw.so* or the *libhidapi-libusb.so*, depending if the hidraw or the libusb back-end is to be used.
 
 Next, in the `ykur/`, run `make` to build the application.
-If the build process is successful the ykush executable will bi in the `ykur/ykurcmd/bin/` folder.
+If the build process is successful the ykurcmd executable will bi in the `ykur/ykurcmd/bin/` folder.
 
 The next step is to make the shared library accessible to executable.
 We can install the *libhidapi-hidraw.so* or the *libhidapi-libusb.so*, depending if the hidraw or the libusb back-end is to be used, in a system folder (e.g., /usr/lib/) or set the environment variable *LD_LIBRARY_PATH* with the path to the library file.
@@ -66,7 +66,7 @@ We can install the *libhidapi-hidraw.so* or the *libhidapi-libusb.so*, depending
 Using it
 ========
 
-Navigate to the `ykur/ykurcmd/bin` folder and run `ykush -h` to print all the available command options and syntax.
+Navigate to the `ykur/ykurcmd/bin` folder and run `ykurcmd -h` to print all the available command options and syntax.
 
 Switching the on-board relay
 ----------------------------
@@ -118,11 +118,11 @@ To switch **ON** the on-board relay of board 1 we execute the command:
 ```
 ykurcmd -s YK00005 -u r
 ```
-Note that on Windows the commands are executed using `ykurcmd.exe` instead of the `ykur` showned above which is the
+Note that on Windows the commands are executed using `ykurcmd.exe` instead of the `ykurcmd` showned above which is the
 Linux version.
 
 
-For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/products/4/ykur).
+For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/product/4/YKUR).
 
 
 
