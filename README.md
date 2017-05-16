@@ -54,13 +54,35 @@ We can install the hidapi.dll in the system or ensure that a copy of the file is
 
 Linux
 -----
-Copy to `ykur/ykucmd/inc/` the *libhidapi-hidraw.so* or the *libhidapi-libusb.so*, depending if the hidraw or the libusb back-end is to be used.
 
-Next, in the `ykur/`, run `make` to build the application.
-If the build process is successful the ykurcmd executable will bi in the `ykur/ykurcmd/bin/` folder.
+To build the application, and run it, `libusb-1.0` and `libusb-1.0-dev` libraries must be installed in you system. For example, in Debian based systems do the following in a terminal.
 
-The next step is to make the shared library accessible to executable.
-We can install the *libhidapi-hidraw.so* or the *libhidapi-libusb.so*, depending if the hidraw or the libusb back-end is to be used, in a system folder (e.g., /usr/lib/) or set the environment variable *LD_LIBRARY_PATH* with the path to the library file.
+```
+$ sudo apt-get install libusb-1.0-0-dev
+```
+
+This installed the development files. Now install the binary library.
+
+```
+$ sudo apt-get install libusb-1.0-0
+```
+
+To build the application run:
+
+```
+$ sudo ./build.sh
+```
+
+Please note that this script downloads and builds the hidapi library, so an Internet connection is required.
+
+There may be some dependencies that were not satisfied and cause the build process to fail. If that was the case, install the missing dependencies and re-run the `build.sh` script.
+
+Finally install the hidapi shared libraries and the ykushcmd command by running the following script.
+
+```
+$ sudo ./install.sh
+```
+
 
 
 Using it
