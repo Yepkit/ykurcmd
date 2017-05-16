@@ -49,7 +49,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdio.h>
-
+#include "platformdefs.h"
 #include "stdafx.h"
 #include "commandParser.h"
 #include "usbcom.h"
@@ -351,7 +351,7 @@ int commandParser(int argc, char** argv) {
 }
 
 
-#ifdef LINUX
+#ifdef _LINUX_
 int printUsage(){
 
     printf("\n-------------------");

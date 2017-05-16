@@ -4,11 +4,9 @@
 //
 
 
-// The "define LINUX" should only be used for builds for Linux systems.
-//#define LINUX	// Comment this define to build for Windows systems
+#include "platformdefs.h"
 
-
-#ifndef LINUX
+#ifndef _LINUX_
 
 #pragma once
 

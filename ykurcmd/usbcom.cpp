@@ -53,7 +53,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-
+#include "platformdefs.h"
 #include "stdafx.h"
 #include "hidapi.h"
 #include "usbcom.h"
@@ -167,10 +167,10 @@ int listDevices() {
      	}
 
      	// Print out the returned buffer.
-	/*
+	
      	for (i = 0; i < res; i++)
          	printf("buf[%d]: %d\n", i, buf[i]);
-	*/
+	
 
     	return 0;
  }
@@ -219,7 +219,7 @@ int listDevices() {
 	size_t convertedChars = 0;
 	wchar_t serial[newsize];
 
-#ifndef LINUX
+#ifndef _LINUX_
 	mbstowcs_s(&convertedChars, serial, origsize, iSerial, _TRUNCATE);
 #else
 	mbstowcs(serial, iSerial, newsize);
@@ -243,12 +243,7 @@ int listDevices() {
          	printf("Unable to read YKUR command response\n");
      	}
 
-     	// Print out the returned buffer.
-     	/*
-	for (i = 0; i < res; i++)
-         	printf("buf[%d]: %d\n", i, buf[i]);
-	*/
-
+ 
     	return 0;
  }
  
