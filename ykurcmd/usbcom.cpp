@@ -167,10 +167,10 @@ int listDevices() {
      	}
 
      	// Print out the returned buffer.
-	
+        /*	
      	for (i = 0; i < res; i++)
          	printf("buf[%d]: %d\n", i, buf[i]);
-	
+	    */
 
     	return 0;
  }
