@@ -150,7 +150,10 @@ int listDevices() {
 
      	// Open YKUR device
      	handle = hid_open(VENDOR_ID, PRODUCT_ID, NULL);
-
+        if (handle == NULL) {
+	        printf("\n\nUnable to open YKRUD device.\n");
+            return -1;
+        }
      	// Set the hid_read() function to be blocking.
      	hid_set_nonblocking(handle, 0);
 
@@ -226,7 +229,11 @@ int listDevices() {
 #endif
 
      	// Open the YKUR device 
- 	handle = hid_open(VENDOR_ID, PRODUCT_ID, serial);
+ 	    handle = hid_open(VENDOR_ID, PRODUCT_ID, serial);
+        if (handle == NULL) {
+	        printf("\n\nUnable to open YKRUD device.\n");
+            return -1;
+        }
 
      	// Set the hid_read() function to be blocking (wait for response from YKUR).
     	hid_set_nonblocking(handle, 0);
