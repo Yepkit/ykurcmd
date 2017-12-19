@@ -53,6 +53,7 @@
 #include "stdafx.h"
 #include "commandParser.h"
 #include "usbcom.h"
+#include <ykur.h>
 
 using namespace std;
 
@@ -64,8 +65,9 @@ enum cmdAction {
     	LIST_DEVICES,
     	DISPLAY_SERIAL_NUMBER,
     	GET_PORT_STATUS,
-	GET_RELAY_STATUS,
+	    GET_RELAY_STATUS,
     	PRINT_HELP,
+        GET_FIRMWARE_VERSION,
 };
 
 bool bySerial = false;
@@ -91,7 +93,9 @@ int commandParser(int argc, char** argv) {
 		case 2:
 			if ((argv[1][0]=='-') && (argv[1][1]=='l')) {
 				action = LIST_DEVICES;
-			}
+			} else if ((argv[1][0]=='-') && (argv[1][1]=='v')) {
+                action = GET_FIRMWARE_VERSION;
+            }
 			break;
 		case 3:
 			// Single Option
@@ -99,10 +103,23 @@ int commandParser(int argc, char** argv) {
 				action = PORT_OFF;
 			} else if ((argv[1][0] == '-') && (argv[1][1]=='u')) {
 				action = PORT_ON;
-			} else {
+            } else {
 				action = PRINT_HELP;
 			} 	
 			break;
+
+        case 4:
+            // Single Option with Serial number
+            if ((argv[1][0]=='-')&&(argv[1][1]=='s')) {
+                bySerial = true;
+                iSerial = argv[2];
+                if((argv[3][0]=='-')&&(argv[3][1]=='v')) {
+                    action = GET_FIRMWARE_VERSION;
+                } else {
+                    action = PRINT_HELP;
+                }
+            }
+            break;
 
 		case 5:
 			// Two Options
@@ -340,6 +357,25 @@ int commandParser(int argc, char** argv) {
         	printf("\n---------------------\n");
         	listDevices();
 	}
+
+
+
+    if ( action == GET_FIRMWARE_VERSION ) {
+	    Ykur *ykur = new Ykur();
+        char major, minor, patch;
+
+        if (bySerial) {
+            ykur->get_firmware_version(iSerial, &major, &minor, &patch);
+            printf("\nRev.%d.%d.%d\n",major, minor, patch);
+        } else {
+            ykur->get_firmware_version(NULL, &major, &minor, &patch);
+            printf("\nRev.%d.%d.%d\n", major, minor, patch);
+        }
+	}
+
+
+
+
 
 
 	if ( action == PRINT_HELP ) {
