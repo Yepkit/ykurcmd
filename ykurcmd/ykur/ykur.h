@@ -43,6 +43,8 @@ class Ykur : public UsbDevice
         {     
         }
 
+
+
         
         /***********************************************************************
          * Method: get_firmware_version
@@ -67,7 +69,51 @@ class Ykur : public UsbDevice
          ************************************************************************/
         void get_firmware_version(char *serial, char *major, char *minor, char *patch);
 
+         
         
+        /***********************************************************************
+         * Method: set_port_default
+         *
+         * Description:
+         *
+         *  Sets the default state of a YKUR port.
+         *
+         * Inputs:
+         *
+         *  serial      - Pointer to the serial number string
+         *
+         *  port        - Target port number in ASCII
+         *
+         *  state       - Port state. 0 -> Off; 1 -> On; (values in ASCII)
+         *
+         *
+         ************************************************************************/
+        void set_port_default(char *serial, char port, char state);
+
+        
+        
+        /***********************************************************************
+         * Method: write_byte_ykemb
+         *
+         * Description:
+         *
+         *
+         *
+         ************************************************************************/
+        char write_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char mem_addr_msb, unsigned char mem_addr_lsb, unsigned char byte);
+
+        
+        
+        /***********************************************************************
+         * Method: read_byte_ykemb
+         *
+         * Description:
+         *
+         *
+         *
+         ************************************************************************/
+        char read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char mem_addr_msb, unsigned char mem_addr_lsb, unsigned char* byte_buffer);
+
 
 };
 
@@ -79,10 +125,9 @@ class Ykur : public UsbDevice
 //FUNCTIONS
 //---------------------------------
 
-void ykush3_cmd_parser(int argc, char** argv);
+void yemb_interface_command_parser(int argc, char** argv); 
 
 
-void ykush3_list_attached(void); 
 
 
 

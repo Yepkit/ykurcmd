@@ -68,6 +68,8 @@ enum cmdAction {
 	    GET_RELAY_STATUS,
     	PRINT_HELP,
         GET_FIRMWARE_VERSION,
+        CONF_SET_PORT_DEFAULT,
+        YKEMB_INTERFACE,
 };
 
 bool bySerial = false;
@@ -130,11 +132,93 @@ int commandParser(int argc, char** argv) {
 			if ((argv[3][0] == '-') && (argv[3][1]=='d')) {
 				action = PORT_OFF;
 			} else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
+				action = PORT_ON;                
+			} else {
+				action = PRINT_HELP;
+			}
+
+            if ((argv[1][0] == '-') && (argv[1][1]=='c') && (argv[1][2]=='s')) {
+                //Configure SET
+                if ((argv[2][0] == '-') && (argv[2][1] == 'p') && (argv[2][2] == 'd')) {
+                    action = CONF_SET_PORT_DEFAULT;
+                }
+
+            }
+            
+            
+
+			break;
+
+       
+        case 6:
+
+            action = PRINT_HELP;
+
+            if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
+            //ykushcmd ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
+            
+                action = YKEMB_INTERFACE;
+
+            }
+            
+            break;
+
+
+        case 7:
+
+            action = PRINT_HELP;
+
+            if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
+            //ykushcmd ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
+            
+                action = YKEMB_INTERFACE;
+
+            }
+
+            if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
+				bySerial = true;
+				iSerial = argv[2];	
+			}
+            
+            if ((argv[3][0] == '-') && (argv[3][1]=='c') && (argv[3][2]=='s')) {
+                //Configure SET
+                if ((argv[4][0] == '-') && (argv[4][1] == 'p') && (argv[4][2] == 'd')) {
+                    action = CONF_SET_PORT_DEFAULT;
+                }
+				
+			} else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
 				action = PORT_ON;
 			} else {
 				action = PRINT_HELP;
 			}
-			break;
+            break;
+
+        
+        case 8:
+
+            action = PRINT_HELP;
+
+            if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
+            //ykushcmd -s serial_number ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
+            
+                action = YKEMB_INTERFACE;
+
+            }
+
+
+        case 9:
+
+            action = PRINT_HELP;
+
+            if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
+            //ykushcmd -s serial_number ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
+            
+                action = YKEMB_INTERFACE;
+
+            }
+            
+            break;
+
 
 		default:
 			printUsage();
@@ -375,6 +459,15 @@ int commandParser(int argc, char** argv) {
 
 
 
+    if (action == CONF_SET_PORT_DEFAULT) {
+        Ykur *ykur = new Ykur();
+
+        if (bySerial) {
+            ykur->set_port_default(iSerial, argv[5][0], argv[6][0]);
+        } else {
+            ykur->set_port_default(NULL, argv[3][0], argv[4][0]);
+        }
+    }
 
 
 
