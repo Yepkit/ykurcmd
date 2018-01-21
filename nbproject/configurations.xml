@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="hidapi">
+        <df name="libusb">
+          <in>hid.c</in>
+        </df>
+        <df name="linux">
+          <in>hid.c</in>
+        </df>
+      </df>
+      <df name="ykurcmd">
+        <df name="usb_device">
+          <in>yk_usb_device.cpp</in>
+        </df>
+        <df name="utils">
+          <in>string2val.cpp</in>
+        </df>
+        <df name="ykur">
+          <in>ykur.cpp</in>
+        </df>
+        <in>commandParser.cpp</in>
+        <in>usbcom.cpp</in>
+        <in>ykurcmd.cpp</in>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+      <itemPath>nbproject/private/launcher.properties</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <flagsDictionary>
+        <element flagsID="0"
+                 commonFlags="-mtune=generic -march=x86-64 -g -fpic -fstack-protector-strong"/>
+      </flagsDictionary>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>ykurcmd/bin/ykurcmd</executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>ykurcmd/usb_device</pElem>
+              <pElem>ykurcmd/ykur</pElem>
+              <pElem>ykurcmd/inc</pElem>
+              <pElem>ykurcmd/utils</pElem>
+              <pElem>.</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>LINUX</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+        <preBuild>
+          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
+          <preBuildCommand></preBuildCommand>
+        </preBuild>
+      </makefileType>
+      <folder path="0/hidapi/libusb">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/libusb-1.0</pElem>
+            <pElem>hidapi/hidapi</pElem>
+            <pElem>hidapi/libusb</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <folder path="0/hidapi/linux">
+        <cTool>
+          <incDir>
+            <pElem>hidapi/hidapi</pElem>
+            <pElem>hidapi/linux</pElem>
+          </incDir>
+        </cTool>
+      </folder>
+      <item path="hidapi/libusb/hid.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="hidapi/linux/hid.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="ykurcmd/commandParser.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ykurcmd/usb_device/yk_usb_device.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="ykurcmd/usbcom.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ykurcmd/utils/string2val.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ykurcmd/ykur/ykur.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="ykurcmd/ykurcmd.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

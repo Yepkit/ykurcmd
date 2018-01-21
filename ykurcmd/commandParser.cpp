@@ -60,16 +60,19 @@ using namespace std;
 
 
 enum cmdAction {
-    	PORT_ON,
-    	PORT_OFF,
-    	LIST_DEVICES,
-    	DISPLAY_SERIAL_NUMBER,
-    	GET_PORT_STATUS,
-	    GET_RELAY_STATUS,
-    	PRINT_HELP,
-        GET_FIRMWARE_VERSION,
-        CONF_SET_PORT_DEFAULT,
-        YKEMB_INTERFACE,
+    
+    PORT_ON,
+    PORT_OFF,
+    LIST_DEVICES,
+    DISPLAY_SERIAL_NUMBER,
+    GET_PORT_STATUS,
+    GET_RELAY_STATUS,
+    PRINT_HELP,
+    GET_FIRMWARE_VERSION,
+    CONF_SET_PORT_DEFAULT,
+    YKEMB_INTERFACE,
+    CONFIG_COMMAND,
+    
 };
 
 bool bySerial = false;
@@ -78,37 +81,41 @@ bool bySerial = false;
 
 int commandParser(int argc, char** argv) {
 
-  	char choice;
-  	char cmd = 0x00;
-	char addr = 0x00;
-	enum cmdAction action = PRINT_HELP;
-	char *iSerial=NULL;
+    char choice;
+    char cmd = 0x00;
+    char addr = 0x00;
+    enum cmdAction action = PRINT_HELP;
+    char *iSerial=NULL;
 
-  	if ( argc <= 1){
-		printUsage();
-		return 0;
-    	}
+    if ( argc <= 1){
+            printUsage();
+            return 0;
+    }
 
-	
-  	//Parse input options and define action
-	switch (argc) {
-		case 2:
-			if ((argv[1][0]=='-') && (argv[1][1]=='l')) {
-				action = LIST_DEVICES;
-			} else if ((argv[1][0]=='-') && (argv[1][1]=='v')) {
+
+    //Parse input options and define action
+    switch (argc) {
+
+        case 2:
+            if ((argv[1][0]=='-') && (argv[1][1]=='l')) {
+                action = LIST_DEVICES;
+            } else if ((argv[1][0]=='-') && (argv[1][1]=='v')) {
                 action = GET_FIRMWARE_VERSION;
             }
-			break;
-		case 3:
-			// Single Option
-			if ((argv[1][0] == '-') && (argv[1][1]=='d')) {
-				action = PORT_OFF;
-			} else if ((argv[1][0] == '-') && (argv[1][1]=='u')) {
-				action = PORT_ON;
+            break;
+
+        case 3:
+            // Single Option
+            if ((argv[1][0] == '-') && (argv[1][1]=='d')) {
+                action = PORT_OFF;
+            } else if ((argv[1][0] == '-') && (argv[1][1]=='u')) {
+                action = PORT_ON;
+            } else if ((argv[1][0] == '-') && (argv[1][1]=='c')) {
+                action = CONFIG_COMMAND;
             } else {
-				action = PRINT_HELP;
-			} 	
-			break;
+                action = PRINT_HELP;
+            } 	
+            break;
 
         case 4:
             // Single Option with Serial number
@@ -120,47 +127,54 @@ int commandParser(int argc, char** argv) {
                 } else {
                     action = PRINT_HELP;
                 }
+            } else if ((argv[1][0] == '-') && (argv[1][1]=='c')) {
+                action = CONFIG_COMMAND; 
             }
             break;
 
-		case 5:
-			// Two Options
-			if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
-				bySerial = true;
-				iSerial = argv[2];	
-			}
-			if ((argv[3][0] == '-') && (argv[3][1]=='d')) {
-				action = PORT_OFF;
-			} else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
-				action = PORT_ON;                
-			} else {
-				action = PRINT_HELP;
-			}
-
-            if ((argv[1][0] == '-') && (argv[1][1]=='c') && (argv[1][2]=='s')) {
-                //Configure SET
-                if ((argv[2][0] == '-') && (argv[2][1] == 'p') && (argv[2][2] == 'd')) {
-                    action = CONF_SET_PORT_DEFAULT;
-                }
-
+        case 5:
+            // Two Options
+            if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
+                    bySerial = true;
+                    iSerial = argv[2];	
             }
-            
-            
+            if ((argv[3][0] == '-') && (argv[3][1]=='d')) {
+                    action = PORT_OFF;
+            } else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
+                    action = PORT_ON;      
+            } else if ((argv[3][0] == '-') && (argv[3][1]=='c')) {
+                    action = CONFIG_COMMAND; 
+            } else {
+                    action = PRINT_HELP;
+            }
 
-			break;
 
-       
+
+            break;
+
+
         case 6:
 
             action = PRINT_HELP;
 
             if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
             //ykushcmd ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
-            
+
                 action = YKEMB_INTERFACE;
 
             }
-            
+
+            if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
+                    bySerial = true;
+                    iSerial = argv[2];	
+            }
+
+            if ((argv[3][0] == '-') && (argv[3][1]=='c')) {
+                    action = CONFIG_COMMAND; 
+            } else {
+                    action = PRINT_HELP;
+            }
+
             break;
 
 
@@ -170,37 +184,38 @@ int commandParser(int argc, char** argv) {
 
             if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
             //ykushcmd ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
-            
+
                 action = YKEMB_INTERFACE;
+                break;
 
             }
 
             if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
-				bySerial = true;
-				iSerial = argv[2];	
-			}
-            
+                                bySerial = true;
+                                iSerial = argv[2];	
+                        }
+
             if ((argv[3][0] == '-') && (argv[3][1]=='c') && (argv[3][2]=='s')) {
                 //Configure SET
                 if ((argv[4][0] == '-') && (argv[4][1] == 'p') && (argv[4][2] == 'd')) {
                     action = CONF_SET_PORT_DEFAULT;
                 }
-				
-			} else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
-				action = PORT_ON;
-			} else {
-				action = PRINT_HELP;
-			}
+
+                        } else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
+                                action = PORT_ON;
+                        } else {
+                                action = PRINT_HELP;
+                        }
             break;
 
-        
+
         case 8:
 
             action = PRINT_HELP;
 
             if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
             //ykushcmd -s serial_number ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
-            
+
                 action = YKEMB_INTERFACE;
 
             }
@@ -212,240 +227,241 @@ int commandParser(int argc, char** argv) {
 
             if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
             //ykushcmd -s serial_number ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
-            
+
                 action = YKEMB_INTERFACE;
 
             }
-            
+
             break;
 
 
-		default:
-			printUsage();
-			break;
-	}
+        default:
+            printUsage();
+            break;
+
+    }
 
 
 
-	//Get options values and execute action
-	
-	if ( action == PORT_OFF ) {
-		if (bySerial) {
-			switch(argv[4][0]) {
-				case 'r':
-					// Relay off
-					cmd = 0x02;
-					addr = 0x11;
-                			commandBySerial(iSerial, cmd, addr);
-					break;
+    //Get options values and execute action
 
-            			case '1':
-                			// Port 1 off
-                			cmd = 0x02;
-					addr = 0x01;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
+    if ( action == PORT_OFF ) {
+            if (bySerial) {
+                    switch(argv[4][0]) {
+                            case 'r':
+                                    // Relay off
+                                    cmd = 0x02;
+                                    addr = 0x11;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
 
-            			case '2':
-                			// Port 2 off
-                			cmd = 0x02;
-					addr = 0x02;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
+                            case '1':
+                                    // Port 1 off
+                                    cmd = 0x02;
+                                    addr = 0x01;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
 
-            			case '3':
-                			// Port 3 off
-                			cmd = 0x02;
-					addr = 0x03;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
+                            case '2':
+                                    // Port 2 off
+                                    cmd = 0x02;
+                                    addr = 0x02;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
 
-            			case '4':
-                			// Port 4 off
-                			cmd = 0x02;
-					addr = 0x04;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
+                            case '3':
+                                    // Port 3 off
+                                    cmd = 0x02;
+                                    addr = 0x03;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
 
-            			case 'a':
-                			// All ports off
-                			cmd = 0x02;
-					addr = 0x0a;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
+                            case '4':
+                                    // Port 4 off
+                                    cmd = 0x02;
+                                    addr = 0x04;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
 
-            			default:
-                			printUsage();
-                			break;
-        		}
-		} else {
-			switch(argv[2][0]) {
-				case 'r':
-				    // Relay off
-				    cmd = 0x02;
-				    addr = 0x11;
+                            case 'a':
+                                    // All ports off
+                                    cmd = 0x02;
+                                    addr = 0x0a;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            default:
+                                    printUsage();
+                                    break;
+                    }
+            } else {
+                    switch(argv[2][0]) {
+                            case 'r':
+                                // Relay off
+                                cmd = 0x02;
+                                addr = 0x11;
+                command(cmd, addr);
+                                break;
+
+                            case '1':
+                                    // Port 1 off
+                                    cmd = 0x02;
+                                    addr = 0x01;
+                                    command(cmd, addr);
+                                    break;
+
+                            case '2':
+                                    // Port 2 off
+                                    cmd = 0x02;
+                                    addr = 0x02;
+                                    command(cmd, addr);
+                                    break;
+
+                            case '3':
+                                    // Port 3 off
+                                    cmd = 0x02;
+                                    addr = 0x03;
+                                    command(cmd, addr);
+                                    break;
+
+                            case '4':
+                                    // Port 4 off
+                                    cmd = 0x02;
+                                    addr = 0x04;
+                                    command(cmd, addr);
+                                    break;
+
+                            case 'a':
+                                    // All ports off
+                                    cmd = 0x02;
+                                    addr = 0x0a;
+                                    command(cmd, addr);
+                                    break;
+
+                            default:
+                                    printUsage();
+                                    break;
+                    }
+
+            }
+    }	
+
+
+
+    if ( action == PORT_ON ) {
+            if (bySerial) {
+                    switch(argv[4][0]) {
+                            case 'r':
+                                    // Relay on
+                                    cmd = 0x01;
+                                    addr = 0x11;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            case '1':
+                                    // Port 1 on
+                                    cmd = 0x01;
+                                    addr = 0x01;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            case '2':
+                                    // Port 2 on
+                                    cmd = 0x01;
+                                    addr = 0x02;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            case '3':
+                                    // Port 3 on
+                                    cmd = 0x01;
+                                    addr = 0x03;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            case '4':
+                                    // Port 4 on
+                                    cmd = 0x01;
+                                    addr = 0x04;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            case 'a':
+                                    // All ports on
+                                    cmd = 0x01;
+                                    addr = 0x0a;
+                                    commandBySerial(iSerial, cmd, addr);
+                                    break;
+
+                            default:
+                                    printUsage();
+                                    break;
+                    }
+            } else {
+                    switch(argv[2][0]) {
+                        case 'r':
+                                    // Relay on
+                                    cmd = 0x01;
+                                    addr = 0x11;
+                command(cmd, addr);
+                                    break;
+
+                    case '1':
+                    // Port 1 on
+                    cmd = 0x01;
+                                    addr = 0x01;
                     command(cmd, addr);
-				    break;
+                    break;
 
-            			case '1':
-                			// Port 1 off
-                			cmd = 0x02;
-					addr = 0x01;
-                			command(cmd, addr);
-                			break;
-
-            			case '2':
-                			// Port 2 off
-                			cmd = 0x02;
-					addr = 0x02;
-                			command(cmd, addr);
-                			break;
-
-            			case '3':
-                			// Port 3 off
-                			cmd = 0x02;
-					addr = 0x03;
-                			command(cmd, addr);
-                			break;
-
-            			case '4':
-                			// Port 4 off
-                			cmd = 0x02;
-					addr = 0x04;
-                			command(cmd, addr);
-                			break;
-
-            			case 'a':
-                			// All ports off
-                			cmd = 0x02;
-					addr = 0x0a;
-                			command(cmd, addr);
-                			break;
-
-            			default:
-                			printUsage();
-                			break;
-        		}
-
-		}
-	}	
-
-
-
-	if ( action == PORT_ON ) {
-		if (bySerial) {
-			switch(argv[4][0]) {
-				case 'r':
-					// Relay on
-					cmd = 0x01;
-					addr = 0x11;
-                			commandBySerial(iSerial, cmd, addr);
-					break;
-
-            			case '1':
-                			// Port 1 on
-                			cmd = 0x01;
-					addr = 0x01;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
-
-            			case '2':
-                			// Port 2 on
-                			cmd = 0x01;
-					addr = 0x02;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
-
-            			case '3':
-                			// Port 3 on
-                			cmd = 0x01;
-					addr = 0x03;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
-
-            			case '4':
-                			// Port 4 on
-                			cmd = 0x01;
-					addr = 0x04;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
-
-            			case 'a':
-                			// All ports on
-                			cmd = 0x01;
-					addr = 0x0a;
-                			commandBySerial(iSerial, cmd, addr);
-                			break;
-
-            			default:
-                			printUsage();
-                			break;
-        		}
-		} else {
-			switch(argv[2][0]) {
-			    case 'r':
-					// Relay on
-					cmd = 0x01;
-					addr = 0x11;
+                    case '2':
+                    // Port 2 on
+                    cmd = 0x01;
+                                    addr = 0x02;
                     command(cmd, addr);
-					break;
+                    break;
 
-            		case '1':
-                	// Port 1 on
-                	cmd = 0x01;
-					addr = 0x01;
-                	command(cmd, addr);
-                	break;
+                    case '3':
+                    // Port 3 on
+                    cmd = 0x01;
+                                    addr = 0x03;
+                    command(cmd, addr);
+                    break;
 
-            		case '2':
-                	// Port 2 on
-                	cmd = 0x01;
-					addr = 0x02;
-                	command(cmd, addr);
-                	break;
+                    case '4':
+                    // Port 4 on
+                    cmd = 0x01;
+                                    addr = 0x04;
+                    command(cmd, addr);
+                    break;
 
-            		case '3':
-                	// Port 3 on
-                	cmd = 0x01;
-					addr = 0x03;
-                	command(cmd, addr);
-                	break;
+                    case 'a':
+                    // All ports on
+                    cmd = 0x01;
+                                    addr = 0x0a;
+                    command(cmd, addr);
+                    break;
 
-            		case '4':
-                	// Port 4 on
-                	cmd = 0x01;
-					addr = 0x04;
-                	command(cmd, addr);
-                	break;
+                    default:
+                            printUsage();
+                            break;
+                    }
 
-            		case 'a':
-                	// All ports on
-                	cmd = 0x01;
-					addr = 0x0a;
-                	command(cmd, addr);
-                	break;
-
-            		default:
-                		printUsage();
-                		break;
-        		}
-
-		}
-	}	
+            }
+    }	
 
 
 
 	
-	if ( action == LIST_DEVICES ) {
-		printf("\nAttached YKUR Boards\n");
-        	printf("\n---------------------\n");
-        	listDevices();
-	}
+    if ( action == LIST_DEVICES ) {
+            printf("\nAttached YKUR Boards\n");
+            printf("\n---------------------\n");
+            listDevices();
+    }
 
 
 
     if ( action == GET_FIRMWARE_VERSION ) {
-	    Ykur *ykur = new Ykur();
+        Ykur *ykur = new Ykur();
         char major, minor, patch;
 
         if (bySerial) {
@@ -455,25 +471,26 @@ int commandParser(int argc, char** argv) {
             ykur->get_firmware_version(NULL, &major, &minor, &patch);
             printf("\nRev.%d.%d.%d\n", major, minor, patch);
         }
-	}
-
-
-
-    if (action == CONF_SET_PORT_DEFAULT) {
-        Ykur *ykur = new Ykur();
-
-        if (bySerial) {
-            ykur->set_port_default(iSerial, argv[5][0], argv[6][0]);
-        } else {
-            ykur->set_port_default(NULL, argv[3][0], argv[4][0]);
-        }
     }
 
 
 
-	if ( action == PRINT_HELP ) {
-		printUsage();
-	}
+    if (action == CONFIG_COMMAND) {
+        ykur_config_command_parser(argc, argv);
+    }
+
+
+
+
+    if(action == YKEMB_INTERFACE){
+        ykemb_interface_command_parser(argc, argv);
+    }
+
+
+
+    if ( action == PRINT_HELP ) {
+            printUsage();
+    }
 
 
     return 0;

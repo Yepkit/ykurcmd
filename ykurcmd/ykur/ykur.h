@@ -89,6 +89,29 @@ class Ykur : public UsbDevice
          *
          ************************************************************************/
         void set_port_default(char *serial, char port, char state);
+        
+        
+        /***********************************************************************
+         * Method: get_port_default
+         *
+         * Description:
+         *
+         *  Sets the default state of a YKUR port.
+         *
+         * Inputs:
+         *
+         *  serial      - Pointer to the serial number string
+         *
+         *  port        - Target port number in ASCII
+         *
+         *
+         * Return value:
+         * 
+         *  Returns the 1 or 0 representing the default state.
+         *
+         ************************************************************************/
+        char get_port_default(char *serial, char port);
+        
 
         
         
@@ -115,6 +138,8 @@ class Ykur : public UsbDevice
         char read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char mem_addr_msb, unsigned char mem_addr_lsb, unsigned char* byte_buffer);
 
 
+        
+        void print_help(char** argv);
 };
 
 
@@ -125,9 +150,9 @@ class Ykur : public UsbDevice
 //FUNCTIONS
 //---------------------------------
 
-void yemb_interface_command_parser(int argc, char** argv); 
+void ykemb_interface_command_parser(int argc, char** argv); 
 
-
+void ykur_config_command_parser(int argc, char** argv);
 
 
 
