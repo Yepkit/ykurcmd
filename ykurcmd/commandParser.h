@@ -5,4 +5,6 @@ int commandParser(int argc, char** argv);
 
 int printUsage();
 
+#define SOFTWARE_VERSION    "Rev.1.0.1"
+
 #endif // COMMANDPARSER_H

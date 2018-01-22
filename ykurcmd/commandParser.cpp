@@ -72,6 +72,7 @@ enum cmdAction {
     CONF_SET_PORT_DEFAULT,
     YKEMB_INTERFACE,
     CONFIG_COMMAND,
+    PRINT_SOFTWARE_VERSION,
     
 };
 
@@ -101,6 +102,10 @@ int commandParser(int argc, char** argv) {
                 action = LIST_DEVICES;
             } else if ((argv[1][0]=='-') && (argv[1][1]=='v')) {
                 action = GET_FIRMWARE_VERSION;
+            } else if ((argv[1][0] == '-') && (argv[1][1]=='-')) {
+                if((argv[1][2] == 'v') && (argv[1][3]=='e') && (argv[1][4]=='r') && (argv[1][5]=='s') && (argv[1][6]=='i')) {
+                    action = PRINT_SOFTWARE_VERSION;
+                }
             }
             break;
 
@@ -129,7 +134,8 @@ int commandParser(int argc, char** argv) {
                 }
             } else if ((argv[1][0] == '-') && (argv[1][1]=='c')) {
                 action = CONFIG_COMMAND; 
-            }
+                
+            } 
             break;
 
         case 5:
@@ -450,6 +456,16 @@ int commandParser(int argc, char** argv) {
     }	
 
 
+    switch(action) {
+        case PRINT_SOFTWARE_VERSION:
+            printf("\n\nVersion: %s\n\n", SOFTWARE_VERSION);
+            return 0;
+            break;
+            
+        default:
+            
+            break;
+    }
 
 	
     if ( action == LIST_DEVICES ) {
