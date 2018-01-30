@@ -105,6 +105,7 @@ void ykur_config_command_parser(int argc, char** argv) {
         
         case GET_PORT_DEFAULT:
             //printf("\n%d\n", ykur->get_port_default(serial, port));
+            ykur->get_port_default(serial, port);
             break;
         
         default:
@@ -286,9 +287,16 @@ void Ykur::get_firmware_version(char *serial, char *major, char *minor, char *pa
     sendHidReport(serial, hid_report_out, hid_report_in, 65);
 
     //handle board response HID report
-    *major = hid_report_in[2];
-    *minor = hid_report_in[3];
-    *patch = hid_report_in[4];
+    if((hid_report_in[0]==0x20)&&(hid_report_in[1]==0x01)) {
+        *major = hid_report_in[2];
+        *minor = hid_report_in[3];
+        *patch = hid_report_in[4];
+    } else {
+        *major = 1;
+        *minor = 0;
+        *patch = 0;
+    }
+    
 
     return;
 }
@@ -619,19 +627,129 @@ char Ykur::read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char m
 
 
 
+/***********************************************************************
+* Method: get_port_status
+*
+* Description:
+*  
+*  Fetch and return the switching state of a YKUR port.
+*  
+* Input:
+* 
+*  serial      - Pointer to string with the board serial number.
+*                Null if no serial is used.
+*
+*  port        - Port number in ASCII.
+*                  "r" - Relay
+*                  "1" - Port 1
+*                  "2" - Port 2
+*                  "3" - Port 3
+*                  "4" - Port 4
+*
+* Return values:
+* 
+*  -1      Error
+*  0       Port OFF
+*  1       Port ON
+* 
+************************************************************************/
+char Ykur::get_port_status(char *serial, char port) {
+    
+    //
+    //1. Prepare HID report
+    //
+    hid_report_out[0] = 0;          //HID report id
+    hid_report_out[1] = 0x03;       //Get status command
+    
+    //set output buffer values for transmission
+    switch(port) {
+        case 'r':
+            hid_report_out[2] = 0x11;   //Relay
+            break;
+            
+        case '1':
+            hid_report_out[2] = 0x01;   //Port 1
+            break;
+            
+        case '2':
+            hid_report_out[2] = 0x02;   //Port 2
+            break;
+            
+        case '3':
+            hid_report_out[2] = 0x03;   //Port 3
+            break;
+            
+        case '4':
+            hid_report_out[2] = 0x04;   //Port 4
+            break;
+            
+        default:
+            return -1;
+            break;
+    }
+    
+    
+    //
+    //2. Transmit HID report
+    //
+    //send HID report to board 
+    sendHidReport(serial, hid_report_out, hid_report_in, 65);
+    
+    //
+    //3. Process response
+    //
+    if((hid_report_in[0]!=0x03)||(hid_report_in[2]=0xAA)) {
+        //Error occured
+        return -1;
+    }
+    
+    return hid_report_in[2];
+    
+}
+        
+
+
+
+
+
+
+
 void Ykur::print_help(char** argv) {
     
     printf("\n\n%s Help\n\n", argv[0]);
-    printf("\n1. Port Switching Commands\n");
+    printf("\nPort Switching Commands\n");
     printf("---------------------------\n");
     
+    printf("\nSwitch port Up/On\n");
+    printf("\nykurcmd [-s <serial_number>] -u <port>\n\n");
+    
+    printf("\nSwitch port Down/Off\n");
+    printf("\nykurcmd [-s <serial_number>] -d <port>\n\n");
+    
+    printf("\nGet port switching status\n");
+    printf("\nykurcmd [-s <serial_number>] -g <port>\n\n");
+    
+    
+    printf("\nConfiguration Commands\n");
+    printf("----------------------\n");
     printf("\nWrite Port Default Parameter\n");
-    printf("\nykurcmd [-s <serial_number>] -cwpd <port> <state>\n");
+    printf("\nykurcmd [-s <serial_number>] -cwpd <port> <state>\n\n");
     
     printf("\nRead Port Default Parameter\n");
-    printf("\nykurcmd [-s <serial_number>] -crpd <port>\n");
+    printf("\nykurcmd [-s <serial_number>] -crpd <port>\n\n");
     
-    printf("\n\nFor detailed explanation of all the commans and options please refer to the ykushcmd User Manual, available for download in the product page at yepkit.com");
+    printf("\nYKEMB Interface Commands\n");
+    printf("------------------------\n\n");
+    
+    printf("\nWrite byte to YKEMB\n");
+    printf("\nykurcmd [-s <serial_number>] ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>\n\n");
+    
+    printf("\nRead byte from YKEMB\n");
+    printf("\nykurcmd [-s <serial_number>] ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>\n\n");
+    
+    
+    
+    printf("\nFor detailed explanation of all the commands and options please refer to the ykushcmd User Manual, available for download in the product page at yepkit.com");
     
     
     

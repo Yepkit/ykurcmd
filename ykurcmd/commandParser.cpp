@@ -87,9 +87,10 @@ int commandParser(int argc, char** argv) {
     char addr = 0x00;
     enum cmdAction action = PRINT_HELP;
     char *iSerial=NULL;
+    Ykur *ykur = new Ykur();
 
     if ( argc <= 1){
-            printUsage();
+        ykur->print_help(argv);
             return 0;
     }
 
@@ -242,7 +243,7 @@ int commandParser(int argc, char** argv) {
 
 
         default:
-            printUsage();
+            ykur->print_help(argv);
             break;
 
     }
@@ -297,7 +298,7 @@ int commandParser(int argc, char** argv) {
                                     break;
 
                             default:
-                                    printUsage();
+                                ykur->print_help(argv);
                                     break;
                     }
             } else {
@@ -345,7 +346,7 @@ int commandParser(int argc, char** argv) {
                                     break;
 
                             default:
-                                    printUsage();
+                                ykur->print_help(argv);
                                     break;
                     }
 
@@ -400,7 +401,7 @@ int commandParser(int argc, char** argv) {
                                     break;
 
                             default:
-                                    printUsage();
+                                ykur->print_help(argv);
                                     break;
                     }
             } else {
@@ -448,7 +449,7 @@ int commandParser(int argc, char** argv) {
                     break;
 
                     default:
-                            printUsage();
+                        ykur->print_help(argv);
                             break;
                     }
 
@@ -459,9 +460,21 @@ int commandParser(int argc, char** argv) {
     switch(action) {
         case PRINT_SOFTWARE_VERSION:
             printf("\n\nVersion: %s\n\n", SOFTWARE_VERSION);
-            return 0;
             break;
+           
+        case GET_PORT_STATUS:
+            char port_status;
             
+            
+            if(bySerial) {
+                port_status = ykur->get_port_status(argv[2], argv[4][0]);
+            } else {
+                port_status = ykur->get_port_status(NULL, argv[2][0]);
+            }
+            
+            
+            break;
+          
         default:
             
             break;
@@ -477,12 +490,12 @@ int commandParser(int argc, char** argv) {
 
 
     if ( action == GET_FIRMWARE_VERSION ) {
-        Ykur *ykur = new Ykur();
+        //Ykur *ykur = new Ykur();
         char major, minor, patch;
 
         if (bySerial) {
             ykur->get_firmware_version(iSerial, &major, &minor, &patch);
-            printf("\nRev.%d.%d.%d\n",major, minor, patch);
+            printf("\nFirmware Version: Rev.%d.%d.%d\n",major, minor, patch);
         } else {
             ykur->get_firmware_version(NULL, &major, &minor, &patch);
             printf("\nRev.%d.%d.%d\n", major, minor, patch);
@@ -505,54 +518,13 @@ int commandParser(int argc, char** argv) {
 
 
     if ( action == PRINT_HELP ) {
-            printUsage();
+            ykur->print_help(argv);
     }
 
 
     return 0;
 }
 
-
-#ifdef _LINUX_
-int printUsage(){
-
-    printf("\n-------------------");
-    printf("\n\tUsage:\n");
-    printf("-------------------\n");
-    printf("\nykurcmd -d r \t\tTurns OFF the in-board relay\n");
-    printf("\nykurcmd -u r \t\tTurns ON the in-board relay\n");
-    printf("\nykurcmd -s serial -d r \t\tTurns OFF the in-board relay of the board with the specified serial number\n");
-    printf("\nykurcmd -s serial -u r \t\tTurns ON the in-board relay of the board with the specified serial number\n");
-    printf("\nykurcmd -d port_number \t\tTurns OFF the port with the number port_number\n");
-    printf("\nykurcmd -u port_number \t\tTurns ON the port with the number port_number\n");
-    printf("\nykurcmd -l \t\tLists all currently attached YKUR boards\n");
-    printf("\nykurcmd -s serial_number -d port_number \t\tTurns OFF the port with the number port_number for the board with the specified serial number\n");
-    printf("\nykush -s serial_number -u port_number \t\tTurns ON the port with the number port_number for the board with the specified serial number\n\n\n");
-
-    return 0;
-}
-
-#else
-
-int printUsage(){
-
-    printf("\n-------------------");
-    printf("\n\tUsage:\n");
-    printf("-------------------\n");
-    printf("\nykurcmd.exe -d r \t\tTurns OFF the in-board relay\n");
-    printf("\nykurcmd.exe -u r \t\tTurns ON the in-board relay\n");
-    printf("\nykurcmd.exe -s serial -d r \t\tTurns OFF the in-board relay of the board with the specified serial number\n");
-    printf("\nykurcmd.exe -s serial -u r \t\tTurns ON the in-board relay of the board with the specified serial number\n");
-    printf("\nykurcmd.exe -d port_number \t\tTurns OFF the port with the number port_number\n");
-    printf("\nykurcmd.exe -u port_number \t\tTurns ON the port with the number port_number\n");
-    printf("\nykurcmd.exe -l \t\tLists all currently attached YKUR boards\n");
-    printf("\nykurcmd.exe -s serial_number -d port_number \t\tTurns OFF the port with the number port_number for the board with the specified serial number\n");
-    printf("\nykush.exe -s serial_number -u port_number \t\tTurns ON the port with the number port_number for the board with the specified serial number\n\n\n");
-
-    return 0;
-}
-
-#endif
 
 
 

@@ -231,7 +231,7 @@ int listDevices() {
      	// Open the YKUR device 
  	    handle = hid_open(VENDOR_ID, PRODUCT_ID, serial);
         if (handle == NULL) {
-	        printf("\n\nUnable to open YKRUD device.\n");
+            printf("\n\nUnable to open YKRUD device.\n");
             return -1;
         }
 

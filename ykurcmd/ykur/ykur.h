@@ -138,6 +138,35 @@ class Ykur : public UsbDevice
         char read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char mem_addr_msb, unsigned char mem_addr_lsb, unsigned char* byte_buffer);
 
 
+        /***********************************************************************
+         * Method: get_port_status
+         *
+         * Description:
+         *  
+         *  Fetch and return the switching state of a YKUR port.
+         *  
+         * Input:
+         * 
+         *  serial      - Pointer to string with the board serial number.
+         *                Null if no serial is used.
+         *
+         *  port        - Port number in ASCII.
+         *                  "r" - Relay
+         *                  "1" - Port 1
+         *                  "2" - Port 2
+         *                  "3" - Port 3
+         *                  "4" - Port 4
+         *
+         * Return values:
+         * 
+         *  -1      Error
+         *  0       Port OFF
+         *  1       Port ON
+         * 
+         ************************************************************************/
+        char get_port_status(char *serial, char port);
+        
+        
         
         void print_help(char** argv);
 };
