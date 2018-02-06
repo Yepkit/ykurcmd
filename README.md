@@ -88,6 +88,10 @@ $ sudo ./install.sh
 Using it
 ========
 
+Please refer to the software User Manual which can be downloaded from the Documents and Resources section of the [YKUR product page](https://www.yepkit.com/product/300106/YKUR).
+
+Some usage examples bellow.
+
 Navigate to the `ykur/ykurcmd/bin` folder and run `ykurcmd -h` to print all the available command options and syntax.
 
 Switching the on-board relay
@@ -144,7 +148,7 @@ Note that on Windows the commands are executed using `ykurcmd.exe` instead of th
 Linux version.
 
 
-For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/product/4/YKUR).
+For more information and resources for the YKUSH board please visit the [yepkit website ykur page](https://www.yepkit.com/product/300106/YKUR).
 
 
 
