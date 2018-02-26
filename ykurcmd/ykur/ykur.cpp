@@ -627,10 +627,7 @@ char Ykur::read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char m
 
 
 
-/***********************************************************************
-* Method: get_port_status
-*
-* Description:
+/*!
 *  
 *  Fetch and return the switching state of a YKUR port.
 *  
@@ -640,26 +637,26 @@ char Ykur::read_byte_ykemb(char* serial, unsigned char i2c_addr, unsigned char m
 *                Null if no serial is used.
 *
 *  port        - Port number in ASCII.
-*                  "r" - Relay
-*                  "1" - Port 1
-*                  "2" - Port 2
-*                  "3" - Port 3
-*                  "4" - Port 4
+*                  * "r" - Relay
+*                  * "1" - Port 1
+*                  * "2" - Port 2
+*                  * "3" - Port 3
+*                  * "4" - Port 4
 *
 * Return values:
 * 
-*  -1      Error
-*  0       Port OFF
-*  1       Port ON
+* * -1      Error
+* * 0       Port OFF
+* * 1       Port ON
 * 
-************************************************************************/
+*/
 char Ykur::get_port_status(char *serial, char port) {
     
     //
     //1. Prepare HID report
     //
     hid_report_out[0] = 0;          //HID report id
-    hid_report_out[1] = 0x03;       //Get status command
+    hid_report_out[1] = 0x03;       //! Get status command code: 0x03
     
     //set output buffer values for transmission
     switch(port) {
@@ -695,10 +692,24 @@ char Ykur::get_port_status(char *serial, char port) {
     //send HID report to board 
     sendHidReport(serial, hid_report_out, hid_report_in, 65);
     
+    //DEBUG PRINT---------------------
+    /*
+    printf("\n\n!!! DEBUG PRINT !!!\n");
+    printf("\nReceived USB message:");
+    int i;
+    unsigned char *p=hid_report_in;
+    for(i=0; i<10; i++){
+        printf("\nbyte[%d]=0x%X", i, *p++);
+    }
+    printf("\n\n!!! END OF DEBUG PRINT !!!\n");
+     */
+    //---------------------------------
+    
+    
     //
     //3. Process response
     //
-    if((hid_report_in[0]!=0x03)||(hid_report_in[2]=0xAA)) {
+    if((hid_report_in[0]!=0x03)||(hid_report_in[2]==0xAA)) {
         //Error occured
         return -1;
     }
@@ -721,35 +732,29 @@ void Ykur::print_help(char** argv) {
     printf("---------------------------\n");
     
     printf("\nSwitch port Up/On\n");
-    printf("\nykurcmd [-s <serial_number>] -u <port>\n\n");
+    printf("\n%s [-s <serial_number>] -u <port>\n\n", argv[0]);
     
     printf("\nSwitch port Down/Off\n");
-    printf("\nykurcmd [-s <serial_number>] -d <port>\n\n");
+    printf("\n%s [-s <serial_number>] -d <port>\n\n", argv[0]);
     
-    printf("\nGet port switching status\n");
-    printf("\nykurcmd [-s <serial_number>] -g <port>\n\n");
+    printf("\nGet port switching status (see Note 1)\n");
+    printf("\n%s [-s <serial_number>] -g <port>\n", argv[0]);
+    printf("\n---------------------------------------------------------------------------------------------------");
+    printf("\nNote 1: Get status command is only supported on boards with firmware version greater than Rev.1.2.0");
+    printf("\n---------------------------------------------------------------------------------------------------\n");
     
     
-    printf("\nConfiguration Commands\n");
-    printf("----------------------\n");
-    printf("\nWrite Port Default Parameter\n");
-    printf("\nykurcmd [-s <serial_number>] -cwpd <port> <state>\n\n");
+    printf("\n\nInformation Commands\n");
+    printf("---------------------------\n");
+    printf("\nShow ykurcmd software version\n");
+    printf("\n%s --version\n\n", argv[0]);
     
-    printf("\nRead Port Default Parameter\n");
-    printf("\nykurcmd [-s <serial_number>] -crpd <port>\n\n");
-    
-    printf("\nYKEMB Interface Commands\n");
-    printf("------------------------\n\n");
-    
-    printf("\nWrite byte to YKEMB\n");
-    printf("\nykurcmd [-s <serial_number>] ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>\n\n");
-    
-    printf("\nRead byte from YKEMB\n");
-    printf("\nykurcmd [-s <serial_number>] ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>\n\n");
+    printf("\nGet YKUR board firmware version\n");
+    printf("\n%s [-s <serial_number>] -v\n\n", argv[0]);
     
     
     
-    printf("\nFor detailed explanation of all the commands and options please refer to the ykushcmd User Manual, available for download in the product page at yepkit.com");
+    printf("\nFor detailed explanation of all the commands and options please refer to the ykushcmd User Manual, available for download in the product page at yepkit.com\n\n");
     
     
     

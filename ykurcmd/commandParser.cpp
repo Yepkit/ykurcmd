@@ -1,4 +1,5 @@
-/****************************************************************************
+/*! \file */
+/*
  FileName:      commandParser.cpp
  Dependencies:  See INCLUDES section
  Compiler:      Visual Studio Community 2015
@@ -41,7 +42,7 @@
  *
  *
  *
-*****************************************************************************/
+*/
 
 
 // INCLUDES ---------------------------------------------------------------
@@ -59,22 +60,6 @@ using namespace std;
 
 
 
-enum cmdAction {
-    
-    PORT_ON,
-    PORT_OFF,
-    LIST_DEVICES,
-    DISPLAY_SERIAL_NUMBER,
-    GET_PORT_STATUS,
-    GET_RELAY_STATUS,
-    PRINT_HELP,
-    GET_FIRMWARE_VERSION,
-    CONF_SET_PORT_DEFAULT,
-    YKEMB_INTERFACE,
-    CONFIG_COMMAND,
-    PRINT_SOFTWARE_VERSION,
-    
-};
 
 bool bySerial = false;
 
@@ -97,50 +82,51 @@ int commandParser(int argc, char** argv) {
 
     //Parse input options and define action
     switch (argc) {
-
+        /*! If single command: 
+         */
         case 2:
             if ((argv[1][0]=='-') && (argv[1][1]=='l')) {
-                action = LIST_DEVICES;
+                action = LIST_DEVICES; //! * List attached YKUR devices command.
             } else if ((argv[1][0]=='-') && (argv[1][1]=='v')) {
-                action = GET_FIRMWARE_VERSION;
+                action = GET_FIRMWARE_VERSION;  //! * Get YKUR firmware version for attached board command (no serial provided).
             } else if ((argv[1][0] == '-') && (argv[1][1]=='-')) {
                 if((argv[1][2] == 'v') && (argv[1][3]=='e') && (argv[1][4]=='r') && (argv[1][5]=='s') && (argv[1][6]=='i')) {
-                    action = PRINT_SOFTWARE_VERSION;
+                    action = PRINT_SOFTWARE_VERSION;    //! * Display ykurcmd version command.
                 }
             }
             break;
 
         case 3:
-            // Single Option
+            /*! If one option command without serial: 
+             */
             if ((argv[1][0] == '-') && (argv[1][1]=='d')) {
-                action = PORT_OFF;
+                action = PORT_OFF;  //! * Switch port off.
             } else if ((argv[1][0] == '-') && (argv[1][1]=='u')) {
-                action = PORT_ON;
-            } else if ((argv[1][0] == '-') && (argv[1][1]=='c')) {
-                action = CONFIG_COMMAND;
+                action = PORT_ON;   //! * Switch port on.
+            } else if ((argv[1][0] == '-') && (argv[1][1]=='g')) {
+                action = GET_PORT_STATUS;   //! * Get port or relay status.
             } else {
                 action = PRINT_HELP;
             } 	
             break;
 
         case 4:
-            // Single Option with Serial number
+            /*! If one option command with serial: 
+             */
             if ((argv[1][0]=='-')&&(argv[1][1]=='s')) {
                 bySerial = true;
-                iSerial = argv[2];
+                iSerial = argv[2];  
                 if((argv[3][0]=='-')&&(argv[3][1]=='v')) {
-                    action = GET_FIRMWARE_VERSION;
+                    action = GET_FIRMWARE_VERSION;  //! * Get YKUR firmware version command.
                 } else {
                     action = PRINT_HELP;
                 }
-            } else if ((argv[1][0] == '-') && (argv[1][1]=='c')) {
-                action = CONFIG_COMMAND; 
-                
             } 
             break;
 
         case 5:
-            // Two Options
+            /*! If one option command: 
+             */
             if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
                     bySerial = true;
                     iSerial = argv[2];	
@@ -149,96 +135,11 @@ int commandParser(int argc, char** argv) {
                     action = PORT_OFF;
             } else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
                     action = PORT_ON;      
-            } else if ((argv[3][0] == '-') && (argv[3][1]=='c')) {
-                    action = CONFIG_COMMAND; 
+            } else if ((argv[3][0] == '-') && (argv[3][1]=='g')) {
+                    action = GET_PORT_STATUS; 
             } else {
                     action = PRINT_HELP;
             }
-
-
-
-            break;
-
-
-        case 6:
-
-            action = PRINT_HELP;
-
-            if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
-            //ykushcmd ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
-
-                action = YKEMB_INTERFACE;
-
-            }
-
-            if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
-                    bySerial = true;
-                    iSerial = argv[2];	
-            }
-
-            if ((argv[3][0] == '-') && (argv[3][1]=='c')) {
-                    action = CONFIG_COMMAND; 
-            } else {
-                    action = PRINT_HELP;
-            }
-
-            break;
-
-
-        case 7:
-
-            action = PRINT_HELP;
-
-            if((argv[1][0]=='y')&&(argv[1][1]=='k')&&(argv[1][2]=='e')&&(argv[1][3]=='m')&&(argv[1][4]=='b')) {    
-            //ykushcmd ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
-
-                action = YKEMB_INTERFACE;
-                break;
-
-            }
-
-            if ((argv[1][0] == '-') && (argv[1][1]=='s')) {
-                                bySerial = true;
-                                iSerial = argv[2];	
-                        }
-
-            if ((argv[3][0] == '-') && (argv[3][1]=='c') && (argv[3][2]=='s')) {
-                //Configure SET
-                if ((argv[4][0] == '-') && (argv[4][1] == 'p') && (argv[4][2] == 'd')) {
-                    action = CONF_SET_PORT_DEFAULT;
-                }
-
-                        } else if ((argv[3][0] == '-') && (argv[3][1]=='u')) {
-                                action = PORT_ON;
-                        } else {
-                                action = PRINT_HELP;
-                        }
-            break;
-
-
-        case 8:
-
-            action = PRINT_HELP;
-
-            if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
-            //ykushcmd -s serial_number ykemb -r <i2c_addr> <byte_addr_MSB> <byte_addr_LSB>
-
-                action = YKEMB_INTERFACE;
-
-            }
-
-
-        case 9:
-
-            action = PRINT_HELP;
-
-            if((argv[3][0]=='y')&&(argv[3][1]=='k')&&(argv[3][2]=='e')&&(argv[3][3]=='m')&&(argv[3][4]=='b')) {    
-            //ykushcmd -s serial_number ykemb -w <i2c_addr> <byte_addr_MSB> <byte_addr_LSB> <byte>
-
-                action = YKEMB_INTERFACE;
-
-            }
-
             break;
 
 
@@ -459,7 +360,7 @@ int commandParser(int argc, char** argv) {
 
     switch(action) {
         case PRINT_SOFTWARE_VERSION:
-            printf("\n\nVersion: %s\n\n", SOFTWARE_VERSION);
+            printf("\n\nSoftware ykurcmd version: %s\n\n", SOFTWARE_VERSION);
             break;
            
         case GET_PORT_STATUS:
@@ -468,9 +369,47 @@ int commandParser(int argc, char** argv) {
             
             if(bySerial) {
                 port_status = ykur->get_port_status(argv[2], argv[4][0]);
+                if(port_status == 1) {
+                    printf("\nPort %c is ON\n\n", argv[4][0]);
+                } else if (port_status == 0) {
+                    printf("\nPort %c is OFF\n\n", argv[4][0]);
+                } else {
+                    printf("\nUnable to get status.\n\n");
+                    
+                    printf("Troubleshooting\n");
+                    printf("---------------\n");
+                    printf("This can happen due to the following reasons:\n");
+                    printf("1. The YKUR board is not properly attached to the Host (e.g., PC);\n");
+                    printf("2. The YKUR board firmware version does not support the get status command.\n");
+     
+                    printf("\nGet Port Status command is only supported by boards with\n");
+                    printf("Firmware version greater than Rev.1.2.0.\n\n");
+                    printf("To check the board firmware version run the following command:\n");  
+                    printf("\n%s [-s <serial_number>] -v\n\n", argv[0]);
+                }
             } else {
                 port_status = ykur->get_port_status(NULL, argv[2][0]);
+                if(port_status == 1) {
+                    printf("\nPort %c is ON\n\n", argv[2][0]);
+                } else if (port_status == 0) {
+                    printf("\nPort %c is OFF\n\n", argv[2][0]);
+                } else {
+                    printf("\nUnable to get status.\n\n");
+                    
+                    printf("Troubleshooting\n");
+                    printf("---------------\n");
+                    printf("This can happen due to the following reasons:\n");
+                    printf("1. The YKUR board is not properly attached to the Host (e.g., PC);\n");
+                    printf("2. The YKUR board firmware version does not support the get status command.\n");
+     
+                    printf("\nGet Port Status command is only supported by boards with\n");
+                    printf("Firmware version greater than Rev.1.2.0.\n\n");
+                    printf("To check the board firmware version run the following command:\n");  
+                    printf("\n%s [-s <serial_number>] -v\n\n", argv[0]);
+                }
             }
+            
+            
             
             
             break;
@@ -495,10 +434,10 @@ int commandParser(int argc, char** argv) {
 
         if (bySerial) {
             ykur->get_firmware_version(iSerial, &major, &minor, &patch);
-            printf("\nFirmware Version: Rev.%d.%d.%d\n",major, minor, patch);
+            printf("\nFirmware Version: Rev.%d.%d.%d\n\n",major, minor, patch);
         } else {
             ykur->get_firmware_version(NULL, &major, &minor, &patch);
-            printf("\nRev.%d.%d.%d\n", major, minor, patch);
+            printf("\nFirmware Version: Rev.%d.%d.%d\n\n", major, minor, patch);
         }
     }
 

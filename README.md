@@ -133,7 +133,7 @@ To find out the serial number of a ykur board, connect it to the host and execut
 ykurcmd -l
 ```
 
-This command will output the serail number of the connected board.
+This command will output the serial number of the connected board.
 Note that if more than one board is connected when this command is executed the serial number of all connected boards
 will be listed.
 
