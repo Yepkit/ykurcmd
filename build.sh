@@ -8,7 +8,7 @@ echo "Checking for git..."
 command -v git >/dev/null 2>&1 || { echo >&2 "Git is required and is not installed. Aborting."; exit 1; }
 
 echo "Fetching latest version of hidapi..."
-git clone git://github.com/signal11/hidapi.git
+git clone https://github.com/signal11/hidapi.git
 
 echo "Building hidapi..."
 make --directory=hidapi/linux -f Makefile-manual

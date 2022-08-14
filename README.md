@@ -55,10 +55,10 @@ We can install the hidapi.dll in the system or ensure that a copy of the file is
 Linux
 -----
 
-To build the application, and run it, `libusb-1.0` and `libusb-1.0-dev` libraries must be installed in you system. For example, in Debian based systems do the following in a terminal.
+To build the application, and run it, `libudev-dev, `libusb-1.0` and `libusb-1.0-dev` libraries must be installed in you system. For example, in Debian based systems do the following in a terminal.
 
 ```
-$ sudo apt-get install libusb-1.0-0-dev
+$ sudo apt-get install libusb-1.0-0-dev libudev-dev
 ```
 
 This installed the development files. Now install the binary library.
